@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-
+import joblib
 
 # ==========================================================
 # 1. Split Features and Target
@@ -95,5 +95,39 @@ def train_random_forest(X_train, y_train):
     model.fit(X_train, y_train)
 
     print("Random Forest training completed.\n")
+
+    return model
+
+
+# ==========================================================
+# 5. Save Model
+# ==========================================================
+
+def save_model(model, file_path):
+    """
+    Save a trained model to disk.
+    """
+
+    print(f"Saving model to {file_path}...")
+
+    joblib.dump(model, file_path)
+
+    print("Model saved successfully.\n")
+    
+    
+# ==========================================================
+# 6. Load Model
+# ==========================================================
+
+def load_model(file_path):
+    """
+    Load a trained model from disk.
+    """
+
+    print(f"Loading model from {file_path}...")
+
+    model = joblib.load(file_path)
+
+    print("Model loaded successfully.\n")
 
     return model

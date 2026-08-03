@@ -2,10 +2,32 @@ from sklearn.metrics import (
     accuracy_score,
     classification_report,
     confusion_matrix,
+    precision_score,
+    recall_score,
+    f1_score,
     ConfusionMatrixDisplay
 )
 
 import matplotlib.pyplot as plt
+import joblib
+
+
+# ==========================================================
+# 6. Load Model
+# ==========================================================
+
+def load_model(file_path):
+    """
+    Load a trained model from disk.
+    """
+
+    print(f"Loading model from {file_path}...")
+
+    model = joblib.load(file_path)
+
+    print("Model loaded successfully.\n")
+
+    return model
 
 
 # ==========================================================
@@ -124,3 +146,21 @@ def evaluate_model(model, X_test, y_test):
     )
 
     return y_pred
+
+# ==========================================================
+# Compute Evaluation Metrics to be used in calculating the bias
+# ==========================================================
+
+def compute_metrics(y_test, y_pred):
+    """
+    Compute the main evaluation metrics.
+    """
+
+    metrics = {
+        "Accuracy": compute_accuracy(y_test, y_pred),
+        "Precision": precision_score(y_test, y_pred),
+        "Recall": recall_score(y_test, y_pred),
+        "F1-score": f1_score(y_test, y_pred)
+    }
+
+    return metrics
