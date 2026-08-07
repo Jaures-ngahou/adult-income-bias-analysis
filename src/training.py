@@ -5,6 +5,17 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 import joblib
 
+
+
+# ======================================================
+# Load processed datasets
+# ======================================================
+train_path = "../data/processed/train.csv"
+test_path = "../data/processed/test.csv"
+
+train_df = pd.read_csv(train_path)
+test_df = pd.read_csv(test_path)
+
 # ==========================================================
 # 1. Split Features and Target
 # ==========================================================
