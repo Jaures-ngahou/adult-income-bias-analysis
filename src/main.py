@@ -21,7 +21,12 @@ from fairness import (
     compute_disparate_impact,
     compute_equal_opportunity_difference
 )
-
+from interpretability import (
+    get_logistic_coefficients,
+    get_most_influential_features,
+    get_feature_importance,
+    plot_feature_importance
+)
 
 # ==========================================================
 # Main Program
@@ -203,6 +208,53 @@ def main():
         print(f"{key}: {value}")
 
     print("\nProgram completed successfully.")
+    
+        # ======================================================
+    # Phase D - Interpretability
+    # ======================================================
+
+    print("\n========== Phase D - Interpretability ==========\n")
+
+
+    # ------------------------------------------------------
+    # Logistic Regression Coefficients
+    # ------------------------------------------------------
+
+    print("Top Logistic Regression Coefficients:\n")
+
+    coefficients = get_logistic_coefficients(
+        logistic_model,
+        X_train.columns
+    )
+
+    influential_features = get_most_influential_features(
+        coefficients,
+        top_n=15
+    )
+
+    print(influential_features)
+
+
+    # ------------------------------------------------------
+    # Random Forest Feature Importance
+    # ------------------------------------------------------
+
+    print("\nTop Random Forest Feature Importances:\n")
+
+    feature_importance = get_feature_importance(
+        random_forest_model,
+        X_train.columns,
+        top_n=15
+    )
+
+    print(feature_importance)
+
+
+    # ------------------------------------------------------
+    # Plot
+    # ------------------------------------------------------
+
+    plot_feature_importance(feature_importance)
 
 # ==========================================================
 # Entry Point

@@ -1,122 +1,88 @@
-# ==========================================================
-# Import Libraries
-# ==========================================================
-
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import sys
 
-sys.path.append("../src")
-from training import (
-    split_features_target,
-    standardize_features
-)
+# ==========================================================
+# 1. Logistic Regression Coefficients
+# ==========================================================
 
-from evaluation import load_model
+def get_logistic_coefficients(model, feature_names):
+    """
+    Return the coefficients of a trained Logistic Regression model.
+    """
+
+    coefficients = pd.DataFrame({
+        "Feature": feature_names,
+        "Coefficient": model.coef_[0]
+    })
+
+    return coefficients
 
 
 # ==========================================================
-# Load Dataset
+# 2. Most Influential Logistic Regression Features
 # ==========================================================
 
-TRAIN_PATH = "../data/processed/train.csv"
-TEST_PATH = "../data/processed/test.csv"
+def get_most_influential_features(coefficients, top_n=15):
+    """
+    Return the features with the largest absolute coefficients.
+    """
 
-train_df = pd.read_csv(TRAIN_PATH)
-test_df = pd.read_csv(TEST_PATH)
+    coefficients = coefficients.copy()
 
-X_train, X_test, y_train, y_test = split_features_target(
-    train_df,
-    test_df
-)
+    coefficients["Absolute Coefficient"] = (
+        coefficients["Coefficient"].abs()
+    )
 
-X_train_scaled, X_test_scaled, scaler = standardize_features(
-    X_train,
-    X_test
-)
-
-
-# ==========================================================
-# Load Trained Models
-# ==========================================================
-
-logistic_model = load_model("../models/logistic_regression.pkl")
-
-rf_model = load_model("../models/random_forest.pkl")
+    return coefficients.sort_values(
+        by="Absolute Coefficient",
+        ascending=False
+    ).head(top_n)
 
 
 # ==========================================================
-# Logistic Regression Coefficients
+# 3. Random Forest Feature Importance
 # ==========================================================
 
-coefficients = pd.DataFrame({
-    "Feature": X_train.columns,
-    "Coefficient": logistic_model.coef_[0]
-})
+def get_feature_importance(model, feature_names, top_n=15):
+    """
+    Return the most important features of a trained Random Forest model.
+    """
 
-coefficients
+    feature_importance = pd.DataFrame({
+        "Feature": feature_names,
+        "Importance": model.feature_importances_
+    })
 
-
-
-# ==========================================================
-# Top Positive Coefficients
-# ==========================================================
-
-coefficients.sort_values(
-    by="Coefficient",
-    ascending=False
-).head(10)
+    return feature_importance.sort_values(
+        by="Importance",
+        ascending=False
+    ).head(top_n)
 
 
 # ==========================================================
-# Most Influential Features
+# 4. Plot Feature Importance
 # ==========================================================
 
-coefficients["Absolute Coefficient"] = coefficients["Coefficient"].abs()
+def plot_feature_importance(feature_importance):
+    """
+    Plot Random Forest feature importance.
+    """
 
-coefficients.sort_values(
-    by="Absolute Coefficient",
-    ascending=False
-).head(15)
+    plt.figure(figsize=(10, 6))
 
+    plt.barh(
+        feature_importance["Feature"],
+        feature_importance["Importance"]
+    )
 
-# ==========================================================
-# Random Forest Feature Importance
-# ==========================================================
+    plt.gca().invert_yaxis()
 
-feature_importance = pd.DataFrame({
-    "Feature": X_train.columns,
-    "Importance": rf_model.feature_importances_
-})
+    plt.xlabel("Feature Importance")
+    plt.ylabel("Feature")
 
-feature_importance = feature_importance.sort_values(
-    by="Importance",
-    ascending=False
-)
+    plt.title("Top Feature Importances - Random Forest")
 
-feature_importance.head(15)
+    plt.tight_layout()
 
-# ==========================================================
-# Plot Feature Importance
-# ==========================================================
-
-top_features = feature_importance.head(15)
-
-plt.figure(figsize=(10, 6))
-
-plt.barh(
-    top_features["Feature"],
-    top_features["Importance"]
-)
-
-plt.gca().invert_yaxis()
-
-plt.xlabel("Feature Importance")
-plt.ylabel("Feature")
-
-plt.title("Top 15 Feature Importances - Random Forest")
-
-plt.tight_layout()
-
-plt.show()
+    plt.show()
