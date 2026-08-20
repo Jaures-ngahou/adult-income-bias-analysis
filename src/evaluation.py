@@ -139,12 +139,12 @@ def evaluate_model(model, X_test, y_test):
         y_test,
         y_pred
     )
-
+    """
     plot_confusion_matrix(
         y_test,
         y_pred
     )
-
+    """
     return y_pred
 
 # ==========================================================

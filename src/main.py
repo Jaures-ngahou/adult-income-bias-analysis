@@ -147,7 +147,7 @@ def main():
             race_columns
         )
     )
-
+    """
     print("\n========== Disparate Impact ==========\n")
 
     compute_disparate_impact(
@@ -168,7 +168,41 @@ def main():
     )
 
     print("\nProgram completed successfully.")
+    """
+    # ======================================================
+    # Disparate Impact
+    # ======================================================
 
+    print("\n========== Disparate Impact ==========\n")
+
+    di_results = compute_disparate_impact(
+        X_test,
+        logistic_predictions,
+        "sex_Female",
+        "sex_Male"
+    )
+
+    for key, value in di_results.items():
+        print(f"{key}: {value}")
+
+    # ======================================================
+    # Equal Opportunity Difference
+    # ======================================================
+
+    print("\n========== Equal Opportunity Difference ==========\n")
+
+    eod_results = compute_equal_opportunity_difference(
+        X_test,
+        y_test,
+        logistic_predictions,
+        "sex_Female",
+        "sex_Male"
+    )
+
+    for key, value in eod_results.items():
+        print(f"{key}: {value}")
+
+    print("\nProgram completed successfully.")
 
 # ==========================================================
 # Entry Point
